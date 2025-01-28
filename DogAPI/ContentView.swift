@@ -8,13 +8,35 @@
 import SwiftUI
 
 struct ContentView: View {
+	@StateObject private var viewModel: DogViewModel = .init()
+	
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+			if let errorMessage = viewModel.errorMessage {
+				Text("Error: \(errorMessage)")
+			} else if let dog = viewModel.dog {
+				AsyncImage(
+					url: dog.message,
+					content: {
+						image in
+						image.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 300, height: 300)
+					},
+					placeholder: {
+						ProgressView()
+					}
+				)
+			}
+			
+			Button("Get Dog") {
+				viewModel.fetchDog()
+			}
+			.buttonStyle(.borderedProminent)
         }
+		.onAppear {
+			viewModel.fetchDog()
+		}
         .padding()
     }
 }

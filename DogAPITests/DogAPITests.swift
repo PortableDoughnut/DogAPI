@@ -32,5 +32,42 @@ final class DogAPITests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
+	
+	func testDogModel() throws {
+			// Create a sample Dog instance with valid data
+		let dog = Dog(
+			message: URL(string: "https://images.dog.ceo/breeds/springer-english/n02102040_4295.jpg")!,
+			status: true
+		)
+		
+		XCTAssertNotNil(dog.id, "Dog id should not be nil")
+		XCTAssertFalse(dog.id.uuidString.isEmpty, "Dog id should have a valid UUID string")
+		
+		XCTAssertEqual(dog.message, URL(string: "https://images.dog.ceo/breeds/springer-english/n02102040_4295.jpg"), "Dog message URL should match the initialized value")
+		
+		XCTAssertTrue(dog.status, "Dog status should be true as initialized")
+	}
+	
+	func testDogDecodeJSON() throws {
+		let data =
+"""
+{
+	"message": "https://images.dog.ceo/breeds/springer-english/n02102040_4295.jpg",
+	"status": "success"
 }
+""".data(using: .utf8)
+		
+		let decoder: JSONDecoder = .init()
+		let dog = try decoder.decode(Dog.self, from: data!)
+		
+		XCTAssertEqual(
+			dog.message,
+					   URL(
+						string: 
+							"https://images.dog.ceo/breeds/springer-english/n02102040_4295.jpg"
+					   )
+		)
+		XCTAssertTrue(dog.status)
+	}
+	}
+
