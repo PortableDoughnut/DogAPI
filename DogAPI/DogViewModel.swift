@@ -16,7 +16,8 @@ class DogViewModel: ObservableObject {
 		case unknown
 	}
 	
-	@Published var dog: Dog?
+	@Published var dogs: [Dog] = []
+	@Published var currentDog: Dog?
 	@Published var errorMessage: String?
 	
 	func fetchDog() {
@@ -30,7 +31,7 @@ class DogViewModel: ObservableObject {
 		URLSession.shared.dataTask(with: url) {
 			[weak self] data, response, error in
 			DispatchQueue.main.async {
-				if let error = error {
+				if error != nil {
 					self?.errorMessage = fetchDogError.networkError.localizedDescription
 					return
 				}
@@ -42,8 +43,10 @@ class DogViewModel: ObservableObject {
 				
 				do {
 					let dog = try JSONDecoder().decode(Dog.self, from: data)
-					self?.dog = dog
+					self?.currentDog = dog
 					self?.errorMessage = nil
+					
+					self?.dogs.append(dog)
 				} catch {
 					self?.errorMessage = fetchDogError.decodingError.localizedDescription
 				}

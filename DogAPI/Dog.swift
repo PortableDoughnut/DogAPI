@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct Dog: Codable, Identifiable {
+struct Dog: Codable, Identifiable, Equatable {
 	var id: UUID = .init()
 	var message: URL
 	var status: Bool
+	var name: String = ""
 	
 	enum CodingKeys: String, CodingKey {
 		case message
